@@ -4,6 +4,7 @@ from django.views.generic import TemplateView
 from .forms import UserRegistration
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login,logout
+from .models import Inventory,Category
 # Create your views here.
 class INDEX(TemplateView):
     template_name='inventory/index.html'
@@ -13,7 +14,9 @@ class INDEX(TemplateView):
 
 class Dashboard(View):
     def get(self,request):
-        return render(request,'inventory/Dashboard.html')
+        item=Inventory.objects.filter(user=self.request.user.id).order_by('id')
+
+        return render(request,'inventory/Dashboard.html',{'items':item})
 
 
 class signUpView(View):

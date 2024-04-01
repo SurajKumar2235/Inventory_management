@@ -1,7 +1,7 @@
 {%extends 'inventory/base.html'%}
 
 {%block content%}
-<div class=" container row">
+<div class=" row">
     <div class="col-md-10 col-12 mx-auto mt-5">
         <div class="d-flex justify-content-end">
             <a href="#" class="btn btn-primary">+
@@ -21,6 +21,7 @@
                 </tr>
             </thead>
             <tbody>
+                {% if items|length == 0 %}
                 <tr>
                     <th scope="row">-</th>
                     <td>-</td>
@@ -29,6 +30,17 @@
                     <td>-</td>
                     <td>-</td>
 
+                </tr>
+                {%endif%}
+
+                {%for item in items%}
+                <tr>
+                    <th scope="row">{{item.id}}</th>
+                    <th scope="row">{{item.name}}</th>
+                    <th scope="row">{{item.quantity}}</th>
+                    <th scope="row">{{item.category.name}}</th>
+                    <!-- <th scope="row">{{item.id}}</th> -->
+                    {%endfor%}
                 </tr>
             </tbody>
         </table>
