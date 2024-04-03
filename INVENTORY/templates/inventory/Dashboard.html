@@ -4,7 +4,7 @@
 <div class=" row">
     <div class="col-md-10 col-12 mx-auto mt-5">
         <div class="d-flex justify-content-end">
-            <a href="#" class="btn btn-primary">+
+            <a href="{%url 'add-item' %}" class="btn btn-primary">+
 
             </a>
         </div>
@@ -28,7 +28,7 @@
                     <td>-</td>
                     <td>-</td>
                     <td>-</td>
-                    <td>-</td>
+                    <td></td>
 
                 </tr>
                 {%endif%}
@@ -39,7 +39,8 @@
                     <th scope="row">{{item.name}}</th>
                     <th scope="row">{{item.quantity}}</th>
                     <th scope="row">{{item.category.name}}</th>
-                    <!-- <th scope="row">{{item.id}}</th> -->
+                    <td><a href="{% url 'edit-item' item.id %}" class="btn btn-outline-success">Edit</a></td>
+                    <td><a href="{% url 'delete-item' item.id %}" class="btn btn-danger">Delete</a></td>
                     {%endfor%}
                 </tr>
             </tbody>
