@@ -2,7 +2,7 @@
 
 
 ## Introduction
-This project is aimed at [briefly describe the purpose or goal of the project]. This README file provides instructions on setting up the project environment and running the server.
+
 
 ## Prerequisites
 - Python 3.12
@@ -11,14 +11,14 @@ This project is aimed at [briefly describe the purpose or goal of the project]. 
 ## Installation
 1. Clone the repository to your local machine:
 
-git clone <repository_url>
+git clone (https://github.com/SurajKumar2235/Inventory_management.git)
 
 css
 
 
 2. Navigate to the project directory:
 
-cd <project_directory>
+cd Inventory_management
 
 arduino
 
