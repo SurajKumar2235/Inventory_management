@@ -10,22 +10,27 @@
 
 ## Installation
 1. Clone the repository to your local machine:
-  '''
-  git clone (https://github.com/SurajKumar2235/Inventory_management.git)
-  '''
-  
+
+
+  ```
+  git clone https://github.com/SurajKumar2235/Inventory_management.git
+  ```
 
 
 3. Navigate to the project directory:
 
-cd Inventory_management
+  ```
+    cd Inventory_management
 
+  ```
 
 
 3. Create a virtual environment (optional but recommended):
 
-python3 -m venv venv
+  ```
+    python3 -m venv venv
 
+  ```
 
 
 4. Activate the virtual environment:
@@ -40,16 +45,21 @@ python3 -m venv venv
 
 5. Install project dependencies:
 
-pip install -r requirements.txt
 
+  ```
+  pip install -r requirements.txt
+
+  ```
 
 
 
 ## Running the Server
 To run the server, execute the following command:
 
-python manage.py runserver
+  ```
+  python manage.py runserver
 
+  ```
 
 
 
