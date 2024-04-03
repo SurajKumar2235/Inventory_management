@@ -10,24 +10,22 @@
 
 ## Installation
 1. Clone the repository to your local machine:
+  '''
+  git clone (https://github.com/SurajKumar2235/Inventory_management.git)
+  '''
+  
 
-git clone (https://github.com/SurajKumar2235/Inventory_management.git)
 
-css
-
-
-2. Navigate to the project directory:
+3. Navigate to the project directory:
 
 cd Inventory_management
 
-arduino
 
 
 3. Create a virtual environment (optional but recommended):
 
 python3 -m venv venv
 
-r
 
 
 4. Activate the virtual environment:
