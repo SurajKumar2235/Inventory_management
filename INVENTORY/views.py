@@ -99,4 +99,82 @@ class DeleteItem(LoginRequiredMixin, DeleteView):
 	template_name = 'inventory/delete_item.html'
 	success_url = reverse_lazy('dashboard')
 	context_object_name = 'item'
+     
+
+
+# Import necessary modules
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from .models import Inventory, inventory_History
+from .serializers import InventoryHistorySerializer
+
+# Define a viewset for selling items
+class SellItemViewSet(viewsets.ViewSet):
+    permission_classes = (IsAuthenticated,)  # Require authentication for selling items
+
+    def create(self, request):
+        # Extract data from the request
+        item_id = request.data.get('item_id')
+        qty_sold = request.data.get('qty_sold')
+        
+        # Extract employee_id from the JWT payload
+        employee_id = request.user.id
+
+        try:
+            # Retrieve the inventory item
+            inventory_item = Inventory.objects.get(pk=item_id)
+            
+            # Check if the requested quantity is available
+            if inventory_item.quantity < qty_sold:
+                return Response({"error": "Insufficient quantity available"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Reduce the quantity in the inventory
+            inventory_item.quantity -= qty_sold
+            inventory_item.save()
+            
+            # Create a new entry in the inventory history
+            inventory_history = inventory_History.objects.create(
+                item_name=inventory_item.name,
+                item=inventory_item,
+                qty_purchased=qty_sold,
+                price=inventory_item.category,  # Assuming price is stored in category
+                employee_id=employee_id
+            )
+
+            # Serialize the inventory history data
+            serializer = InventoryHistorySerializer(inventory_history)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Inventory.DoesNotExist:
+            return Response({"error": "Inventory item not found"}, status=status.HTTP_404_NOT_FOUND)
+
    
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def employee_list(request):
+    employees = User.objects.filter(is_staff=True)  # Assuming staff users are employees
+    return render(request, 'employee_list.html', {'employees': employees})
+
+@login_required
+def employee_detail(request, employee_id):
+    employee = User.objects.get(id=employee_id)
+    return render(request, 'employee_detail.html', {'employee': employee})
+
+
+from django.shortcuts import render
+from .models import Employee
+
+def employee_view(request):
+  # Check user permissions (if needed)
+  if request.user.is_authenticated and request.user.is_staff:  # Assuming staff has employee access
+    employees = Employee.objects.all()  # Get all employees
+  else:
+    employees = None  # Restrict access if not authorized
+
+  context = {'employees': employees}
+  return render(request, 'employee_template.html', context)

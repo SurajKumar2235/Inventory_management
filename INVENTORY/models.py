@@ -29,11 +29,11 @@ class Category(models.Model):
 
 class Employees(models.Model):
     name=models.CharField(max_length=200,null=False,blank=False)
-    quantity=models.IntegerField()
+    # quantity=models.IntegerField()
     category=models.ForeignKey('Category',on_delete=models.SET_NULL,blank=True,null=True)
     date_created=models.DateTimeField(auto_now_add=True)
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    
+    user=models.ForeignKey(User,on_delete=models.SET_DEFAULT,default=1)
+    is_staff=models.BooleanField(default=True)
     def __str__(self):
         return self.name   
 
@@ -55,4 +55,9 @@ class inventory_History(models.Model):
     
     class Meta:
         db_table='Inventory_history'
+
+
+
+
+
 

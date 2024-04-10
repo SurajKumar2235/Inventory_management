@@ -1,0 +1,24 @@
+
+{%extends 'inventory/base.html'%}
+
+{%block content%}
+
+<table>
+    <thead>
+      <tr>
+        <th>Username</th>
+        </tr>
+    </thead>
+    <tbody>
+      {% for employee in employees %}
+      <tr>
+        <td>{{ employee.user.username }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+{% endblock content %}

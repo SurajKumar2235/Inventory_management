@@ -20,6 +20,12 @@ from .views import INDEX,signUpView,LogoutView,Dashboard,AddItem,EditItem,Delete
 from django.contrib.auth import views as auth_views
 
 
+from rest_framework.routers import DefaultRouter
+from .views import SellItemViewSet
+
+router = DefaultRouter()
+router.register(r'sell-item', SellItemViewSet, basename='sell-item')
+
 
 urlpatterns = [
     path("",INDEX.as_view(), name='index_page'),
@@ -31,3 +37,7 @@ urlpatterns = [
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),
     path('delete-item/<int:pk>', DeleteItem.as_view(), name='delete-item'),
 ]
+
+
+
+urlpatterns += router.urls
