@@ -1,20 +1,40 @@
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView,CreateView,View,UpdateView,DeleteView
-from .forms import InventoryForm, UserRegistration
+from .forms import InventoryForm, StockForm, UserRegistration
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate, login,logout
 from .models import Inventory,Category
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from inventory.settings import LOW_QUANTITY
+from transactions.models import PurchaseBill,SaleBill
+from .models import Inventory as Stock
+
 
 
 # Create your views here.
 class INDEX(TemplateView):
     template_name='inventory/index.html'
 
-
+class HomeView(View):
+    template_name = "home.html"
+    def get(self, request):        
+        labels = []
+        data = []        
+        stockqueryset = Stock.objects.filter(is_deleted=False).order_by('-quantity')
+        for item in stockqueryset:
+            labels.append(item.name)
+            data.append(item.quantity)
+        sales = SaleBill.objects.order_by('-time')[:3]
+        purchases = PurchaseBill.objects.order_by('-time')[:3]
+        context = {
+            'labels'    : labels,
+            'data'      : data,
+            'sales'     : sales,
+            'purchases' : purchases
+        }
+        return render(request, self.template_name, context)
 
 
 class Dashboard(LoginRequiredMixin,View):
@@ -167,14 +187,39 @@ def employee_detail(request, employee_id):
 
 
 from django.shortcuts import render
-from .models import Employee
+from .models import Employees
 
 def employee_view(request):
   # Check user permissions (if needed)
   if request.user.is_authenticated and request.user.is_staff:  # Assuming staff has employee access
-    employees = Employee.objects.all()  # Get all employees
+    employees = Employees.objects.all()  # Get all employees
   else:
     employees = None  # Restrict access if not authorized
 
   context = {'employees': employees}
   return render(request, 'employee_template.html', context)
+
+from .filters import StockFilter
+from django_filters.views import FilterView
+
+class StockListView(FilterView):
+    filterset_class = StockFilter
+    queryset = Stock.objects.filter(is_deleted=False)
+    template_name = 'inventory.html'
+    paginate_by = 10
+
+from django.contrib.messages.views import SuccessMessageMixin
+
+
+class StockCreateView(SuccessMessageMixin, CreateView):                                 # createview class to add new stock, mixin used to display message
+    model = Stock                                                                       # setting 'Stock' model as model
+    form_class = StockForm                                                              # setting 'StockForm' form as form
+    template_name = "edit_stock.html"                                                   # 'edit_stock.html' used as the template
+    success_url = '/inventory'                                                          # redirects to 'inventory' page in the url after submitting the form
+    success_message = "Stock has been created successfully"                             # displays message when form is submitted
+
+    def get_context_data(self, **kwargs):                                               # used to send additional context
+        context = super().get_context_data(**kwargs)
+        context["title"] = 'New Stock'
+        context["savebtn"] = 'Add to Inventory'
+        return context       

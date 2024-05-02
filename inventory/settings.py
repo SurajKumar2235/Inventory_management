@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'crispy_forms',
-    'crispy_bootstrap5'
+    'crispy_bootstrap5',
+    'transactions',
+    'widget_tweaks',                            # uses 'django-widget-tweaks' app
 ]
 
 MIDDLEWARE = [
@@ -133,3 +135,8 @@ CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOW_QUANTITY=3
+
+
+
+STATIC_ROOT = 'INVENTORY/static'
+STATIC_URL = '/static/'

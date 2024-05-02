@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path,include
-from .views import INDEX,signUpView,LogoutView,Dashboard,AddItem,EditItem,DeleteItem
+from .views import INDEX, HomeView,signUpView,LogoutView,Dashboard,AddItem,EditItem,DeleteItem,StockListView,StockCreateView
 from django.contrib.auth import views as auth_views
 
 
@@ -29,6 +29,10 @@ router.register(r'sell-item', SellItemViewSet, basename='sell-item')
 
 urlpatterns = [
     path("",INDEX.as_view(), name='index_page'),
+    path('', HomeView.as_view(), name='home'),
+    path('', StockListView.as_view(), name='inventory'),
+    path('new', StockCreateView.as_view(), name='new-stock'),
+
     path('signup/',signUpView.as_view(),name='signup'),
     path('login/',auth_views.LoginView.as_view(template_name='inventory/login.html'),name='login'),
     path('logout/',LogoutView.as_view(),name='logout'),
