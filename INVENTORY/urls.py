@@ -21,7 +21,7 @@ from django.contrib.auth import views as auth_views
 
 
 from rest_framework.routers import DefaultRouter
-from .views import SellItemViewSet
+from .views import SellItemViewSet,predict
 
 router = DefaultRouter()
 router.register(r'sell-item', SellItemViewSet, basename='sell-item')
@@ -40,6 +40,7 @@ urlpatterns = [
     path('add-item/',AddItem.as_view(),name='add-item'),
     path('edit-item/<int:pk>', EditItem.as_view(), name='edit-item'),
     path('delete-item/<int:pk>', DeleteItem.as_view(), name='delete-item'),
+    path('predict/', predict, name='predict'),
 ]
 
 

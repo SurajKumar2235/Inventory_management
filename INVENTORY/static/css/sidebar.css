@@ -28,12 +28,12 @@
 
 .sidebar-header {
     padding: 20px;
-    background: #4F102B;
+    background: #5ea0ec;
 }
 
 .sidebar-components {
     padding: 20px 0;
-    border-bottom: 1px solid #4F102B;
+    border-bottom: 1px solid #ffa9ce;
 }
 
 .sidebar-paragraph {
@@ -60,14 +60,14 @@ a.right-arrow[data-toggle="collapse"] {
 }
 
 .sidebar-button:hover {
-    color: #4F102B;
+    color: #ee76aa;
     background: #fff;
 }
 
 .sidebar-subitem {
     font-size: 0.9em !important;
     padding-left: 30px !important;
-    background: #69163a;
+    background: #f864a4;
 }
 
 ul.CTAs {
@@ -84,7 +84,7 @@ ul.CTAs a {
 
 a.nav-button {
     background: #fff;
-    color: #4F102B;
+    color: #c5b3bb;
 }
 
 .bottomleft {

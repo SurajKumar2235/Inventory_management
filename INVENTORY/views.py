@@ -1,3 +1,4 @@
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView,CreateView,View,UpdateView,DeleteView
@@ -223,3 +224,80 @@ class StockCreateView(SuccessMessageMixin, CreateView):                         
         context["title"] = 'New Stock'
         context["savebtn"] = 'Add to Inventory'
         return context       
+    
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import pandas as pd
+import numpy as np
+import joblib
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+from datetime import datetime, timedelta
+
+@csrf_exempt
+def predict(request):
+    if request.method == 'POST':
+        # Load the trained SARIMAX model
+        model = joblib.load('Sarimax.pkl')
+
+        # Get input data from request.POST or request.body
+        today = datetime.now().date()
+        initial_inventory = float(request.POST.get('initial_inventory'))
+        lead_time = int(request.POST.get('lead_time'))
+        service_level = float(request.POST.get('service_level'))
+        
+        # Preprocess input data if necessary
+        # For example, create a DataFrame with the input parameters
+        input_data = pd.DataFrame({
+            'date': [today],
+            'initial_inventory': [initial_inventory],
+            'lead_time': [lead_time],
+            'service_level': [service_level]
+        })
+        df=pd.read_csv('archive/train.csv')
+        df=df[df['store']==1]
+        df=df[df['item']==1]
+        print(df)
+        start_date = df.index[0]
+        end_date = df.index[-1]
+        exog_features = ['store']
+        df=df[:lead_time]
+        # Perform prediction
+        prediction = model.predict(len(df), len(df) + lead_time - 1,exog=df[exog_features])
+        print(prediction)
+
+        # Create date indices for the future predictions
+        future_dates = pd.date_range(start=prediction.index[-1] + pd.DateOffset(days=1), periods=lead_time, freq='D')
+
+        # Create a pandas Series with the predicted values and date indices
+        forecasted_demand = pd.Series(prediction, index=future_dates)
+
+        # Calculate the optimal order quantity using the Newsvendor formula
+        z = np.abs(np.percentile(forecasted_demand, 100 * (1 - service_level)))
+        order_quantity = np.ceil(forecasted_demand.mean() + z).astype(int)
+
+        # Calculate the reorder point
+        reorder_point = forecasted_demand.mean() * lead_time + z
+
+        # Calculate the optimal safety stock
+        safety_stock = reorder_point - forecasted_demand.mean() * lead_time
+
+        # Calculate the total cost (holding cost + stockout cost)
+        holding_cost = 0.1  # it's different for every business, 0.1 is an example
+        stockout_cost = 10  # it's different for every business, 10 is an example
+        total_holding_cost = holding_cost * (initial_inventory + 0.5 * order_quantity)
+        total_stockout_cost = stockout_cost * np.maximum(0, forecasted_demand.mean() * lead_time - initial_inventory)
+
+        # Calculate the total cost
+        total_cost = total_holding_cost + total_stockout_cost
+
+        # Return prediction and additional metrics as JSON response
+        return JsonResponse({
+            'prediction': prediction.tolist(),
+            'order_quantity': order_quantity,
+            'reorder_point': reorder_point,
+            'safety_stock': safety_stock,
+            'total_cost': total_cost
+        })
+
+    else:
+        return JsonResponse({'error': 'Only POST requests are allowed'})
