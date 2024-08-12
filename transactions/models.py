@@ -1,5 +1,5 @@
 from django.db import models
-from INVENTORY.models import Inventory as Stock
+from INVENTORY1.models import Inventory as Stock
 
 #contains suppliers
 class Supplier(models.Model):
