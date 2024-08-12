@@ -3,7 +3,7 @@ from INVENTORY.models import Inventory as Stock
 
 #contains suppliers
 class Supplier(models.Model):
-    id = models.AutoField(primary_key=True)
+    id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=150)
     phone = models.CharField(max_length=12, unique=True)
     address = models.CharField(max_length=200)
@@ -17,7 +17,7 @@ class Supplier(models.Model):
 
 #contains the purchase bills made
 class PurchaseBill(models.Model):
-    billno = models.AutoField(primary_key=True)
+    billno = models.BigAutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
     supplier = models.ForeignKey(Supplier, on_delete = models.CASCADE, related_name='purchasesupplier')
 
@@ -66,7 +66,7 @@ class PurchaseBillDetails(models.Model):
 
 #contains the sale bills made
 class SaleBill(models.Model):
-    billno = models.AutoField(primary_key=True)
+    billno = models.BigAutoField(primary_key=True)
     time = models.DateTimeField(auto_now=True)
 
     name = models.CharField(max_length=150)
